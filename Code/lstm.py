@@ -8,6 +8,7 @@ from tensorflow.python.keras.preprocessing.text import Tokenizer
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
 from tensorflow.python.keras.layers import Dense, LSTM, Embedding
 from tensorflow.python.keras.models import Sequential
+from keras import backend
 
 """
     Description: implementing lstm model to an annotated corpora
@@ -140,6 +141,47 @@ def lstm_model(max_words, embedding_dim, embedding_matrix):
     return model
 
 
+def recall_m(y_true, y_pred):
+    """
+    Calculating recall metric
+
+    :param y_true: the real value of a sentence
+    :param y_pred: the estimated value of a sentence
+    :return: recall metric
+    """
+    true_positives = backend.sum(backend.round(backend.clip(y_true * y_pred, 0, 1)))
+    possible_positives = backend.sum(backend.round(backend.clip(y_true, 0, 1)))
+    recall = true_positives / (possible_positives + backend.epsilon())
+    return recall
+
+
+def precision_m(y_true, y_pred):
+    """
+    Calculating precision metric
+
+    :param y_true: the real value of a sentence
+    :param y_pred: the estimated value of a sentence
+    :return: precision metric
+    """
+    true_positives = backend.sum(backend.round(backend.clip(y_true * y_pred, 0, 1)))
+    predicted_positives = backend.sum(backend.round(backend.clip(y_pred, 0, 1)))
+    precision = true_positives / (predicted_positives + backend.epsilon())
+    return precision
+
+
+def f1_m(y_true, y_pred):
+    """
+    Calculating F1 Score metric
+
+    :param y_true: the real value of a sentence
+    :param y_pred: the estimated value of a sentence
+    :return: f1_score metric
+    """
+    precision = precision_m(y_true, y_pred)
+    recall = recall_m(y_true, y_pred)
+    return 2 * ((precision * recall) / (precision + recall + backend.epsilon()))
+
+
 def training_model(x_train, y_train, x_val, y_val, model):
     """
     This function is responsible for compiling and
@@ -153,7 +195,8 @@ def training_model(x_train, y_train, x_val, y_val, model):
     :return: historing of training, trained model
     """
 
-    model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+    model.compile(loss='binary_crossentropy', optimizer='rmsprop',
+                  metrics=['accuracy', f1_m, precision_m, recall_m])
     history = model.fit(x_train, y_train, epochs=10, batch_size=128, validation_data=(x_val, y_val))
     model.save_weights('pre_trained_glove_model.h5')
 
@@ -205,8 +248,11 @@ def testing_model(texts_test, labels_test, tokenizer, model):
 
     # Evaluating the model on the test set
     model.load_weights('pre_trained_glove_model.h5')
-    scores = model.evaluate(x_test, y_test)
-    print("Accuracy: %.2f%%" % (scores[1] * 100))
+    loss, accuracy, f1_score, precision, recall = model.evaluate(x_test, y_test)
+    print("Accuracy: %.2f%%" % (accuracy * 100))
+    print("Precision: %.2f%%" % (precision * 100))
+    print("Recall: %.2f%%" % (recall * 100))
+    print("F1 score: %.2f%%" % (f1_score * 100))
 
 
 def main():

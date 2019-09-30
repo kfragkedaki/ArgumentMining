@@ -5,10 +5,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
+import numpy as np
 import string
 import csv
 import os
-import numpy as np
 
 
 """
@@ -80,6 +80,27 @@ def define_model(x_train, y_train):
     return model
 
 
+def precision(tp, fp):
+    if (tp + fp) != 0:
+        return tp/(tp + fp)
+    else:
+        return "Integer division by zero"
+
+
+def recall(tp, fn):
+    if (tp + fn) != 0:
+        return tp/(tp + fn)
+    else:
+        return "Integer division by zero"
+
+
+def f1_score(precision, recall):
+    if type(recall) != str and type(precision) != str and (precision + recall) != 0:
+        return 2 * (precision * recall) / (precision + recall)
+    else:
+        return "Integer division by zero"
+
+
 def testing_model(model, x_test, y_test):
     """
     This function evaluates the model on the test set
@@ -94,6 +115,18 @@ def testing_model(model, x_test, y_test):
 
     y_predicted = model.predict(x_test)
     cm = confusion_matrix(y_test, y_predicted)
+
+    fp = cm[0][1]
+    fn = cm[1][0]
+    tp = cm[1][1]
+
+    prec = precision(tp, fp)
+    rec = recall(tp, fn)
+
+    print("Precision: %.2f%%" % (prec * 100))
+    print("Recall: %.2f%%" % (rec * 100))
+    print("F1 Score: %.2f%%" % (f1_score(prec, rec) * 100) )
+
     print(cm)
     return cm
 
@@ -135,3 +168,5 @@ if __name__ == '__main__':
     model = define_model(x_train, y_train)
     cm = testing_model(model, x_test, y_test)
     plot_results(cm)
+
+    print(cm[1])
