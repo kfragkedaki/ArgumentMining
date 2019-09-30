@@ -1,0 +1,65 @@
+import os
+import csv
+import json
+
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+
+def enumerate_ambiguous(file_name)      :
+    with open('../dict/dictionary.json', 'r') as dict:
+        dictionary = json.load(dict)
+
+    with open(os.path.join(FILE_PATH, '../Results/' + file_name), mode='r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        counters = {}
+
+        count = 0
+        count_rows = 0
+
+        for row in reader:
+            firstArgumentWordFlag = False
+
+            count_rows += 1
+            # first cell includes sentences, not keywords
+            for column in row[1:]:
+
+                if firstArgumentWordFlag == False:
+                    testStr = "['"
+                    if column.startswith(testStr):
+                        firstArgumentWordFlag = True
+                    else:
+                        continue
+
+                column = column.strip("['] ")
+                column = column.strip('"')
+
+                if column in dictionary:
+                    count += 1
+                    if column in counters:
+                        counters[column] += 1
+                    else:
+                        counters[column] = 1
+                else:
+                    if ' + ' in column:
+                        count += 1
+                        firstPart = column.split(" + ")[0]
+
+                        if firstPart in counters:
+                            counters[firstPart] += 1
+                        else:
+                            counters[firstPart] = 0
+                    else:
+                        print(row)
+                        print('Not found: ', column)
+
+    save_array_to_csv(counters)
+
+
+def save_array_to_csv(my_dict):
+    with open(FILE_PATH + '/../Results/found_Ambiguous_keywords.csv', 'w', newline='') as f:
+        w = csv.writer(f)
+        w.writerows(my_dict.items())
+
+
+if __name__ == '__main__':
+    enumerate_ambiguous('found_ambiguous_results.csv')

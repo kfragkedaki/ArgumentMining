@@ -1,0 +1,173 @@
+from xlrd import open_workbook
+import configparser
+import os
+import re
+import csv
+
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+
+def py23_str(value):
+    """
+    This function tries to convert a string to unicode. Because of the fact that this conversion differ from python 3
+    to python 2, here are checked both possibilities so as the program to run in both python 3 and 2.
+
+    :param value: sentence to be converted from string to unicode
+    :return: converted input
+    """
+
+    try:  # Python 2
+        return unicode(value, errors='ignore', encoding='utf-8')
+    except NameError:  # Python 3
+        try:
+            return str(value, errors='ignore', encoding='utf-8')
+        except TypeError:  # Wasn't a bytes object, no need to decode
+            return str(value)
+
+
+def get_sentences_csv(dataset_number):
+    """
+    This function reads files with .csv extension
+
+    :dataset_number: number that refers to order (starts from 0) of a dataset in datasets.ini
+    :return: a list of sentences
+    """
+    sentences = []
+
+    path, _, column, is_argument = get_parameters_dataset(dataset_number)
+
+    with open(os.path.join(FILE_PATH, path), mode='r') as dataset:
+        reader = csv.reader(dataset)
+        for sentence in reader:
+            if is_argument is not None:
+                sentences.append([str(sentence[int(column)]), str(sentence[int(is_argument)])])
+            else:
+                sentences.append([str(sentence[int(column)]), 'True'])
+
+    sentences.pop(0)
+    return sentences
+
+
+def get_sentences_xls(dataset_number):
+    """
+    This function reads files with .xls extension
+
+    :dataset_number: number that refers to order (starts from 0) of a dataset in datasets.ini
+    :return: a list of sentences
+    """
+    sentences = []
+
+    path, sheet, column, is_argument = get_parameters_dataset(dataset_number)
+
+    reader = open_workbook(path, on_demand=True)
+    sheet = reader.sheet_by_name(sheet)
+    if is_argument is not None:
+        for cell, cell2 in zip(sheet.col(int(column)), sheet.col(int(is_argument))):
+            sentences.append([cell.value.encode("utf-8"), cell2.value.encode("utf-8")])
+    else:
+        for cell in sheet.col(int(column)):
+            sentences.append([cell.value.encode("utf-8"), 'True'])
+
+    sentences.pop(0)
+    return sentences
+
+
+def get_sentences_txt(dataset_number):
+    """
+    This function reads files with .txt or none extension
+
+    :dataset_number: number that refers to order (starts from 0) of a dataset in datasets.ini
+    :return: a list of sentences
+    """
+    sentences = []
+
+    path, _,  _, _ = get_parameters_dataset(dataset_number)
+
+    with open(os.path.join(FILE_PATH, path), mode='r') as txt_file:
+        reader = txt_file.read()
+
+        for sentence in reader.split('.'):
+            sentences.append([sentence])
+
+    return sentences
+
+
+def get_parameters_dataset(dataset):
+    """
+    This function gets the arguments of a specific dataset from datasets.ini
+
+    :dataset: number that refers to order (starts from 0) of a dataset or the name of dataset in datasets.ini
+    :return: section['path'] + file_name: path of dataset
+             sheet: sheet that data are in it if it is an .xls file
+             column: column of sentences to be identified as arguments or not
+             is_argument: column which reveals if a specific sentence is an argument or not
+    """
+    dataset_number, config = check_validity_of_dataset(dataset)
+
+    section = config.sections()[dataset_number]  # each section is a name of a file with data
+    section = config[section]
+    file_name = re.match(r".*: (.*)>", str(section), re.MULTILINE)
+    file_name = file_name.group(1)
+
+    try:
+        sheet = section['sheet']
+    except KeyError:
+        sheet = None
+
+    try:
+        is_argument = section['is_argument']
+    except KeyError:
+        is_argument = None
+
+    try:
+        column = section['column']
+    except KeyError:
+        column = None
+
+    return section['path'] + file_name, sheet, column, is_argument
+
+
+def check_validity_of_dataset(dataset):
+    """
+    This function checks of a dataset exists in dataset.ini or not
+
+    :dataset: number that refers to order (starts from 0) of a dataset or the name of dataset in datasets.ini
+    :return: dataset_number: returns the order of given dataset in datasets.ini
+             config: returns object config from datasets.ini
+    """
+    config = configparser.ConfigParser()
+    config.read('../datasets/datasets.ini')
+
+    if dataset in config:
+        dataset_number = config.sections().index(dataset)
+    elif dataset < len(config.sections()):
+        dataset_number = dataset
+
+    return dataset_number, config
+
+
+def choose_function(dataset):
+    """
+    This function checks the extension of a datasets and chooses an appropriate method to read the file
+
+    :dataset: number that refers to order (starts from 0) of a dataset or the name of dataset in datasets.ini
+    :return: a list of sentences if dataset exits otherwise 'No dataset found'
+    """
+
+    try:
+        dataset_number = int(check_validity_of_dataset(dataset)[0])
+
+        try:
+            _, extension = dataset.rsplit('.', 1)
+        except ValueError:
+            extension = None
+
+        if extension == 'xls':
+            return get_sentences_xls(dataset_number)
+        elif extension == 'csv':
+            return get_sentences_csv(dataset_number)
+        elif extension == 'txt' or extension is None:
+            return get_sentences_txt(dataset_number)
+
+    except TypeError:
+        return 'No dataset found'
