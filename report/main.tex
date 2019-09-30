@@ -1,0 +1,283 @@
+
+%%%% Bachelor Research Assignemt in Argument Mining
+%%%% by Klio Fragkedaki
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+11pt, % The default document font size, options: 10pt, 11pt, 12pt
+%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
+english,
+singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
+%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+%liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
+%toctotoc, % Uncomment to add the main table of contents to the table of contents
+%parskip, % Uncomment to add space between paragraphs
+%nohyperref, % Uncomment to not load the hyperref package
+headsepline, % Uncomment to get a line under the header
+%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
+%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
+]{BachelorAssignment} % The class file specifying the document structure
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+
+\usepackage{mathpazo} % Use the Palatino font by default
+\usepackage{listings} % code in Appendix
+\usepackage{verbatimbox}
+
+\usepackage{color}
+\definecolor{light-gray}{gray}{0.85}
+
+\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+
+\addbibresource{example.bib} % The filename of the bibliography
+
+\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
+\usepackage[titles]{tocloft}
+
+\usepackage{wrapfig}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{xcolor}
+%----------------------------------------------------------------------------------------
+%	MARGIN SETTINGS
+%----------------------------------------------------------------------------------------
+
+\definecolor{maroon}{cmyk}{0,0.87,0.68,0.32}
+\definecolor{halfgray}{gray}{0.55}
+\definecolor{ipythonFrame}{RGB}{207,207,207}
+\definecolor{ipythonBg}{RGB}{247,247,247}
+\definecolor{ipythonRed}{RGB}{186,33,33}
+\definecolor{ipythonGreen}{RGB}{0,128,0}
+\definecolor{ipythonCyan}{RGB}{64,128,128}
+\definecolor{ipythonPurple}{RGB}{170,34,255}
+
+\geometry{
+	paper=a4paper, % Change to letterpaper for US letter
+	inner=2.8cm, % Inner margin
+	outer=2.8cm, % Outer margin
+	%bindingoffset=.5cm, % Binding offset
+	top=1.5cm, % Top margin
+	bottom=1.5cm, % Bottom margin
+	%showframe, % Uncomment to show how the type block is set on the page
+}
+
+\newcommand*{\enableboldchapterintoc}{%
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchapfont}{\protect\normalfont\protect\bfseries}}
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchappagefont}{\protect\normalfont\protect\bfseries}}
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchapleader}{\protect\bfseries\protect\cftdotfill{\protect\cftsecdotsep}}}% dot leaders in bold
+}
+
+\newcommand*{\disableboldchapterintoc}{%
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchappagefont}{\protect\normalfont}}
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchapfont}{\protect\normalfont}}
+	\addtocontents{toc}{\string\renewcommand{\protect\cftchapleader}{\protect\normalfont\protect\cftdotfill{\protect\cftsecdotsep}}}% 
+}
+
+\lstdefinelanguage{iPython}{
+	morekeywords={access,and,break,class,continue,def,del,elif,else,except,exec,finally,for,from,global,if,import,in,is,lambda,not,or,pass,print,raise,return,try,while},%
+	%
+	sensitive=true,
+	morecomment=[l]\#,
+	morestring=[b]',
+	morestring=[b]",
+	%
+	morestring=[s]{'''}{'''},% used for documentation text (mulitiline strings)
+	morestring=[s]{"""}{"""},
+	%
+	literate=*{=}{{\textcolor{ipythonPurple}{=}}}{1}
+	{+}{{\textcolor{ipythonPurple}{+}}}{1}
+	{*}{{\textcolor{ipythonPurple}{*}}}{1}
+	{/}{{\textcolor{ipythonPurple}{/}}}{1}
+	{-}{{\textcolor{ipythonPurple}{-}}}{1}
+	{?}{{\textcolor{ipythonPurple}{?}}}{1},
+	%
+	%
+	identifierstyle=\color{black}\ttfamily,
+	commentstyle=\color{ipythonCyan}\ttfamily,
+	stringstyle=\color{ipythonRed}\ttfamily,
+	keepspaces=true,
+	showspaces=false,
+	showstringspaces=false,
+	%
+	rulecolor=\color{ipythonFrame},
+	frame=single,
+	frameround={t}{t}{t}{t},
+	framexleftmargin=6mm,
+	numbers=left,
+	numberstyle=\tiny\color{halfgray},
+	%
+	backgroundcolor=\color{ipythonBg},
+	basicstyle=\scriptsize,
+	keywordstyle=\color{ipythonGreen}\ttfamily,
+}
+
+\lstset{
+	breaklines=true,
+	identifierstyle=\color{black}\ttfamily,
+	basicstyle=\scriptsize,
+	backgroundcolor=\color{light-gray},
+	tabsize=2,
+}
+
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{Argument Mining}
+\supervisor{Prof. Panagiotis Louridas}
+\examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
+\author{Klio Fragkedaki} % Your name, this is used in the title page and abstract, print it elsewhere with \authorname
+\addresses{} % Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
+
+\subject{Natural Language Processing} % this is not currently used anywhere in the template, print it elsewhere with \subjectname
+\keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
+\university{\href{https://aueb.gr/}{Athens University of Economics and Business}}
+\department{\href{https://my.dmst.aueb.gr/}{Department of Management Science and Technology}} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+
+\AtBeginDocument{
+\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+}
+
+\begin{document}
+
+\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\vspace*{.06\textheight}
+{\scshape\LARGE \univname\par}\vspace{1.5cm}
+\textsc{\Large Bachelor Research Assignment}\\[0.5cm]
+
+\HRule \\[0.4cm]
+{\huge \bfseries \ttitle\par}\vspace{0.4cm}
+\HRule \\[1.5cm]
+ 
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+{\authorname} 
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t]{0.4\textwidth}
+\begin{flushright} \large
+\emph{Supervisor:} \\
+{\supname} 
+\end{flushright}
+\end{minipage}\\[3cm]
+ 
+\vfill
+
+\large \textit{An assignment submitted as part of\\ Bachelor degree}\\[0.3cm]
+\textit{in the}\\[0.4cm]
+\deptname\\[2cm]
+ 
+\vfill
+\vspace{5cm}
+
+{\large \today}\\[4cm] % Date
+%\includegraphics{Logo} % University/department logo
+ 
+\end{center}
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\section*{Acknowledgments}
+	I would like to thank Vasiliki Efstathiou for being the second annotator and a great supervisor, as well as my Professor Panos Louridas.
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\begin{abbreviations}{ll}
+
+\textbf{SVM}  & \textbf{S}upport \textbf{V}ector \textbf{M}achine\\
+\textbf{LR}   & \textbf{L}ogistic \textbf{R}egression\\
+\textbf{NB}   & \textbf{N}aive \textbf{B}ayes classifier\\
+\textbf{RF}   & \textbf{R}andom \textbf{F}orest\\
+\textbf{RNN}  & \textbf{R}ecurrent \textbf{N}eural \textbf{N}etworks for Language Models\\
+\textbf{RF}   & \textbf{R}andom \textbf{F}orest\\
+\textbf{CRF}  & \textbf{C}onditional \textbf{R}andom \textbf{F}orest\\
+\textbf{ML}	  & \textbf{M}aximum \textbf{L}ikelihood\\
+\textbf{TES}  & \textbf{T}extual \textbf{E}ntailment \textbf{S}uites\\
+\textbf{P}    & \textbf{P}arsing Using a Context-Free Grammar\\
+\textbf{LSTM} & \textbf{L}ong \textbf{S}hort-\textbf{t}erm \textbf{M}emory\\
+\textbf{POS} & \textbf{P}art \textbf{O}f \textbf{S}peech\\
+
+\end{abbreviations}
+
+%----------------------------------------------------------------------------------------
+%	RESEARCH CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter
+
+\pagestyle{thesis}
+
+
+\include{Chapters/Chapter1}
+\include{Chapters/Chapter2} 
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4}
+\include{Chapters/Chapter5} 
+\include{Chapters/Chapter6} 
+
+%----------------------------------------------------------------------------------------
+%	REFERENCES
+%----------------------------------------------------------------------------------------
+
+\printbibliography[title={References}]
+
+%----------------------------------------------------------------------------------------
+%	Appendicies
+%----------------------------------------------------------------------------------------
+
+\addcontentsline{toc}{part}{Appendicies}
+\setcounter{chapter}{1}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}%
+
+\disableboldchapterintoc
+\part*{Appendicies}
+
+%\removechapterspaces
+\renewcommand\chaptername{Appendicies}
+\setcounter{chapter}{0}
+
+\include{Appendices/AppendixA}
+\include{Appendices/AppendixB}
+\include{Appendices/AppendixC}
+\include{Appendices/AppendixD}
+\include{Appendices/AppendixE}
+\include{Appendices/AppendixF}
+\include{Appendices/AppendixG}
+\include{Appendices/AppendixH}
+\include{Appendices/AppendixI}
+\include{Appendices/AppendixJ}
+
+
+%----------------------------------------------------------------------------------------
+
+\end{document}  

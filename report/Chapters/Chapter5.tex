@@ -1,0 +1,137 @@
+\chapter{Results}
+
+\label{Chapter5}
+
+Results for both structured and statistical implementations presented in Chapter \ref{Chapter3}, are applied to a set of corpora in order to be evaluated. \par
+
+
+\section{Structural Approach}
+
+The structural approach described in previous chapters is being assessed into this section. For this purpose, the code of Appendix \ref{Appendix8} alongside with two IBM corpora was applied. It has to be mentioned that these two IBM corpora include only argumentative sentences, and we aim to check how many of those arguments will be identified correctly by our algorithm. 
+
+The metric of accuracy was used in order to evaluate the indicators selected for recognizing argumentative sentences. For measuring accuracy, four counters were used; \textbf{true positives} (tp) is counting the times both algorithm and analyst labeled a sentence as argumentative, \textbf{true negatives} (tn) how often both algorithm and analyst labeled as non-argumentative, \textbf{false positive} (fp) the times the algorithm assigned as argumentative a sentence that expert recognized as non-argumentative, \textbf{false negative} (fn) how many times human identified a sentence as argumentative while algorithm did not. 
+
+\begin{itemize}
+ 	\item \textbf{Accuracy} represents the percentage of correctly classified sentences:
+ 	\[ A
+ 	= \dfrac{tp + tn}{tp + tn + fp + fn}
+ 	\]	
+\end{itemize} 
+
+\begin{table}[H]
+	\centering
+	\resizebox{0.65\linewidth}{!}{%
+	\begin{tabular}{ | p{2cm} |  p{4cm} | p{2cm} | }
+		\hline
+		\textbf{Source Data} 
+				& \textbf{file} 			
+						& \textbf{Accuracy}  		\\[0.5cm] \hline
+										
+		\cite{bar-haim-etal-2017-stance}
+				&claim\_stance\_dataset\_v1
+						&17.50\%					\\[0.2cm] 
+		\cite{Aharoni2014}
+				&CDEdata.xls1.00.1480.25
+						&14.81\%					\\[0.2cm]
+		\hline
+	\end{tabular}}
+	\caption{Results of Structural Approach} 
+	\label{structural_approach_results}
+\end{table}
+
+
+\newpage
+\section{Statistical Approach}
+
+%TO DO explain what has been done in this case
+
+\subsection{Random Forest Algorithm}
+Supervised machine learning algorithms need a number of labeled data in order to be trained. That was the reason corpora of Chapter \ref{Chapter4} was created, and used in the implantation of Random Forest classifier algorithm (Appendix \ref{Appendix9}). A number of 33\% of the data used to train the model, while the rest of them to evaluate the results. 
+
+It has to be mentioned that two methods were used for argument's classification. The first one was by tokenizing the sentences, so as to be in a format that a computer can understand, and then training the model based on the tokenized sentences. This method had an accuracy of \textbf{56.83\%}, and the results are displayed in the heatmap of figure \ref{random_forest} (A). The other technique is by determining some features of each sentence and then feed the algorithm with these features instead of the sentences. In this way the accuracy increased to \textbf{79.42\%}, and it deprecates to the heatmap of figure \ref{random_forest} (B). The results of the first approach are not that high, and that is probably because of the unique words.
+
+The features used for classification are the following based on the paper (\cite{Lawrence2016}):
+
+\begin{itemize}
+	\item \textbf{Word Counter}: the number of words in a sentence
+	\item \textbf{Uppercase Characters Counter}: the number of uppercase characters found
+	\item \textbf{Punctuation or Special Characters Counter}: the number of presence punctuation characters like ""
+\end{itemize} 
+
+\begin{figure}[H]
+	\centering
+	\subfloat[Classification based 
+	on the sentences]{{\includegraphics[scale=0.2]{images/random_forest_sentences.png} }}%
+	\qquad
+	\subfloat[Classification based 
+	on features]{{\includegraphics[scale=0.2]{images/random_forest_features.png} }}%
+	\caption{
+		Predicted and Real results of Random Forest classification algorithm
+	}
+	\label{random_forest}
+\end{figure}
+
+\subsection{LSTM-RNN Algorithm}
+
+The LSTM-RNN algorithm described in previous chapters is being assessed into this section. For this purpose, the code of Appendix \ref{Appendix10} alongside with the data-set described in Chapter \ref{Chapter4} was executed.
+
+The data-set used contains an equal number of argumentative and non-argumentative sentences, as well as their labels. The twenty percent of the data were used for training the model, while the rest of them for evaluating it. The model's performance over time is represented in the following plots by using the metrics of accuracy and loss. 
+
+\begin{figure}[H]
+	\centering
+	\subfloat[]{{\includegraphics[scale=0.31]{images/machine_learning_accuracy.png} }}%
+	\qquad
+	\subfloat[]{{\includegraphics[scale=0.31]{images/machine_learning_acc.png} }}%
+	\caption{
+		Training and validation accuracy and loss when using pretrained word embeddings
+	}
+	\label{fig:example}
+\end{figure}
+
+After testing the algorithm in test data, the following results occurred with an accuracy of \textbf{85.44\%}.
+
+\begin{lstlisting}[language=bash]
+Found 10859 unique tokens.
+Shape of data tensor: (5054, 235)
+Shape of label tensor: (5054,)
+Found 400000 word vectors.
+​
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+embedding (Embedding)        (None, None, 100)         1000000   
+_________________________________________________________________
+lstm (LSTM)                  (None, 100)               80400     
+_________________________________________________________________
+dense (Dense)                (None, 1)                 101       
+=================================================================
+Total params: 1,080,501
+Trainable params: 1,080,501
+Non-trainable params: 0
+​
+Train on 200 samples, validate on 1000 samples
+Epoch 1/10
+200/200 [==============================] - 2s 10ms/sample - loss: 0.7334 - acc: 0.5800 - val_loss: 0.6299 - val_acc: 0.7430
+Epoch 2/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.6195 - acc: 0.7650 - val_loss: 0.5864 - val_acc: 0.7080
+Epoch 3/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.5688 - acc: 0.7500 - val_loss: 0.5288 - val_acc: 0.7730
+Epoch 4/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.5049 - acc: 0.8000 - val_loss: 0.5366 - val_acc: 0.7360
+Epoch 5/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.5152 - acc: 0.7600 - val_loss: 0.4399 - val_acc: 0.8560
+Epoch 6/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.4049 - acc: 0.8650 - val_loss: 0.3978 - val_acc: 0.8420
+Epoch 7/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.3900 - acc: 0.8400 - val_loss: 0.4191 - val_acc: 0.8170
+Epoch 8/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.3700 - acc: 0.8550 - val_loss: 0.3642 - val_acc: 0.8560
+Epoch 9/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.3031 - acc: 0.8800 - val_loss: 0.3359 - val_acc: 0.8620
+Epoch 10/10
+200/200 [==============================] - 1s 7ms/sample - loss: 0.2558 - acc: 0.9250 - val_loss: 0.3433 - val_acc: 0.8620
+1264/1264 [==============================] - 1s 547us/sample - loss: 0.3467 - acc: 0.8544
+Accuracy: 85.44%
+\end{lstlisting}
+

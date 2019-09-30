@@ -1,0 +1,147 @@
+\chapter{Methods}
+
+\label{Chapter3}
+
+In this research paper, we attempt to apply two different approaches for recognizing argumentative sentences. These approaches cover both a structured methodology, which is related to the selection of hand-coded linguistic rules, and a statistical one, that includes the implementation of supervised algorithms; namely, Random Forest classifier and sequence classification with LSTM. \par
+
+\section{Structural Approach}
+
+The structural approach is based on lexical cues, rules or patterns for identifying arguments inside a given text. These cues are also referred to as argument indicators, since they are connecting claims and premises, signaling argumentative relations. \par
+
+
+\addvbuffer[8pt 8pt]{
+	\resizebox{0.92\linewidth}{!}{%
+		\begin{tabular}{ |p{3.5cm}|p{1cm}|p{4cm}|p{3cm}|p{3.5cm}|p{1cm}|p{5cm}|p{2.5cm}| }
+			\hline
+			\multicolumn{8}{|c|}{ Argumentative Indicators based on (\cite{knott1994using})} \\
+			\hline
+			Indicator
+								&POS
+											&Indicator
+																	&POS
+					&Indicator
+										&POS
+													&Indicator
+																						&POS\\
+			\hline	
+			even though			&none		&first					&adv
+					&against			&none		&last								&adv\\
+			naturally			&none		& most					&\{"[a-z]*ly": "adv"\}
+					&if					&none		&(T|t)(he more).+?(the more)		&none\\
+			once more			&none		&more					&\{"[a-z]*ly": "adv"\}
+					&once again			&none		&(T|t)(he more).+?(the less)		&none\\
+			surely				&none		&second					&adv
+					&so					&mark		&third								&adv\\
+			should say			&none		&too					&(too)(\$|[\textbackslash\textbackslash.])
+					&might say			&none		&may say							&none\\
+			could say			&none		&while					&mark
+					&as a start			&none		&in order to						&none\\
+			still				&adv		&that is				&none
+					&since				&mark		&yet								&(Y|y)(et)[\^\textbackslash\textbackslash.].\\
+			that				&mark		&above all				&none
+					&actually			&none		&after all							&none\\
+			afterwards			&none		&all in all				&none
+					&also				&none		&although							&none\\
+			anyway				&none		&as a consequence		&none
+					&as a result		&none		&at any rate						&none\\
+			at first blush		&none		&at first view			&none
+					&at the outset		&none		&because							&none\\
+			by comparison		&none		&by the same token		&none
+					&certainly			&none		&consequently						&none\\
+			correspondingly		&none		&despite the fact that	&none
+					&either				&none		&equally							&none\\
+			even then			&none		&every time				&none
+					&except insofar as	&none		&firstly							&none\\
+			for a start			&none		&for instance			&none
+					&further			&none		&for the simple reason				&none\\
+			accordingly			&none		&admittedly				&none
+					&after that			&none		&all the same						&none\\
+			alternatively		&none		&always assuming that	&none
+					&as					&none		&as a corollary						&none\\
+			at first			&none		&at first sight			&none
+					&at the moment when	&none		&at the same time					&none\\
+			but					&none		&by contrast			&none
+					&by the way			&none		&clearly							&none\\
+			conversely			&none		&despite that			&none
+					&essentially		&none		&even so							&none\\
+			eventually			&none		&except					&none
+					&finally			&none		&first of all						&none\\
+			for example			&none		&for one thing			&none
+					&for this reason	&none		&furthermore						&none\\
+			hence				&none		&in actual fact			&none
+					&in any case		&none		&in conclusion						&none\\
+			in fact				&none		&in other words			&none
+					&in short			&none		&in sum								&none\\
+			incidentally		&none		&instead				&none
+					&merely because	 	&none		&just as							&none\\
+			meanwhile			&none		&it might appear that	&none
+					&as long as			&none		&as well							&none\\
+			notably				&none		&moreover				&none
+					&of course			&none		&nevertheless						&none\\
+			on one hand			&none		&not only				&none
+					&now that			&none		&no doubt							&none\\
+			on the grounds that	&none		&on the assumption that	&none
+					&on the one side	&none		&on the other side					&none\\
+			plainly				&none		&otherwise				&none
+					&so that			&none		&providing that						&none\\
+			such that			&none		&secondly				&none
+					&sure enough		&none		&simply because						&none\\
+			thereafter			&none		&summing up				&none
+					&therefore			&none		&suppose that						&none\\
+			thirdly				&none		&the fact is that		&none
+					&to be sure			&none		&though								&none\\
+			to sum up			&none		&to conclude			&none
+					&undoubtedly		&none		&to take an example					&none\\
+			whenever			&none		&to the extent that		&none
+					&whereas			&none		&what is more						&none\\
+			wherever			&none		&for the reason that	&none
+					&besides			&none		&(E|e)(ither).+?(or)				&none\\
+			in one hand			&none		&(N|n)(either).+?(nor)	&none
+					&on one side		&none		&in this case						&none\\
+			in point of fact	&none		&as a matter of fact	&non
+					&provided that		&none		&presumably							&none\\
+			rather than			&none		&regardless				&none
+					&as an example		&none		&simply								&none\\
+			in order that		&none		& 						& 
+					& 					& 			& 									& 	\\ 
+					
+			\hline
+\end{tabular}}}
+
+A list of indicators were extracted from the corpus created by (\cite{knott1994using}). This corpus includes often-used words or phrases in arguments according to paper's authors. Based on these words, a dictionary was developed containing as keys the extracted words, and as values, their specific part of speech in argumentative sentences. It needs to be mentioned that words, considered by us as usual or non-usual in argumentative structures, were added or removed respectively from the dictionary. For this purpose, there were created five methods in Python for paper's extraction, modification, as well as dictionary's creation (Appendix \ref{Appendix6}). The indicators that demonstrate the previously referred dictionary is presented in the table above. \par
+
+Apart from dictionary's development, a way to handle and encapsulate corpora into the same format was necessary, and the code developed for this purpose is shown in Appendix \ref{Appendix7}. Each data-set was differently displayed, from unstructured text to sentence labeled data. This is the reason why there was created a \textit{datasets.ini} file containing information about data, for example the number of column indicating the sentence or/and the label, which sheet includes the desired data, or which is the data-set's path. The key of each record was the name of every corpora as it was saved in local file. So, depending on the data-set's type (excel, csv or txt file) and its configurations, other actions were applied in order to returned a list of sentences and their labels in case corpora was annotated. \par
+
+By using the previously created dictionary and corpora handler, argument identification had to take place (Appendix \ref{Appendix8}). For this reason, part of speech tagging was necessary, so as a sentence's words and their POS to be compared to those words included in the dictionary. Statements tokenization was achieved through the usage of a library called \cite{spaCy}, which is an open-source NLP library written in Python and Cython, and it was selected due to its performance and efficiency comparing to other libraries. If any of matches between the dictionary and a given sentence occur, the sentence is characterized as argumentative, otherwise as non-argumentative. As regards the labeled corpora, the algorithm's outcomes and the given labels, which is considered to be the truth, are correlated so as four counters to be calculated; False Positives, False Negatives, True Positives and True Negatives. These counters are used for measuring accuracy that is a metric for reviewing algorithm's results, which will be used and described at Chapter \ref{Chapter5}. \par
+
+\section{Statistical Approach}
+
+The statistical approach is relying on algorithms developed for automating the argument annotation process. These algorithms receive as input, a representation of data that can be understood by computers. For this reason, textual data of our corpora need to be transformed into numeric tensors. (\cite{Chollet2017}) \par
+
+Text is considered as a form of sequence data, and tokens are the different units into which a text can be split. These units can be either words, characters or n-grams (\cite{Chollet2017}). After text tokenization, the next step is connecting numeric vectors with the occurred tokens. Then, the sequences of vectors instead of words is fed into the selected algorithm. \par
+
+There are a variety of ways for vector and token association. Two and the most known ones for forms of sequence data are the one-hot encodingText and word-embedding methods (\cite{Chollet2017}), which will be used in the implemented algorithms later on. 
+
+As regards one-hot encodingText is a basic way to transform tokens into vectors. Every word is connected with a unique integer index, which is turned into a binary vector of vocabulary's size. Another version of this method is the one-hot hashing trick, which is used when vocabulary's unique tokens are too much that is difficult to be handled. This approach hashes words into a fixed-sized vector through a hashing function, rather than allocating an index to each word, and then creating a dictionary for these indexes. The disadvantages of this method is the hash collisions, and in general the inability of word's correlation that leads to high dimentionality. (\cite{Chollet2017})
+
+Word embedding, or dense word vectors, is another popular way to associate vectors with words. In contrast with one-hot encodingText, this technique has low-dimensionality and float vectors. Furthermore, dense word vectors are trained by the data provided, and thus packing more and more data into the same dimensions. This is achieved by minimizing the geometric distance between related words, like synonyms, while maximizing it when words have different semantic (\cite{Chollet2017}).
+
+The implemented algorithms for argument mining problem are the Random Forest classification algorithm, using one-hot encodingText, and the LSTM-RNN algorithm, using word embedding method. The annotation of argumentative and non-argumentative sentences can be considered as a binary classification in Random Forest (\cite{Stab2014}) or a statistical structure mapping of written language in LSTM (\cite{Chollet2017}).
+
+\subsection{Random Forest Classification Algorithm}
+
+The Random Forest algorithm is a collection of decision trees, where each one of them are slightly different from the others either by selecting the data-points or by selecting different features (\cite{Muller}). Every decision tree, built during the training period, predicts to which class a specific input is more suitable (argument or non-argument). After this process is completed, the chosen prediction for each sentence is the one that has the majority of votes across the decision trees. \cite{Chollet2017}
+
+By using the \texttt{sklearn.ensemble} library, a Random Forest classification algorithm was implemented (Appendix \ref{Appendix9}). First of all, an annotated corpora containing both argumentative and non-argumentative sentences is loaded and features regarding how many words, punctuation characters and uppercase characters were created (see Chapter \ref{Chapter5}). Afterwords, the sentences were tokenized in order to be transformed into a format that computer can understand, as mentioned before. For the tokenization \texttt{OneHotEncoder} of \texttt{sklearn.preprocessing} library was used. The corpora was seperated into a training and a test set of data, and then model was defined and trained using the train data. Finally, the model is tested and a matrix showing the real and the predicted data was presented in a heatmap plot.
+
+The model is applied by using two different methods for training. The one method is using the features created, like in (\cite{Lawrence2016}), while the other is by using the tokenized sentences.
+
+\subsection{LSTM-RNN Algorithm}
+
+Deep learning in natural-language processing problems is aiming to identify patterns of words or sentences (\cite{Chollet2017}). The most appropriate deep learning model for sequence data processing, like sequences of words in our case, is the Recurrent Neural Network algorithm. RNN is a neural network algorithm that is implementing internal iterations. The RNN resets its state every time a new independent process occurs, which means that each sequence is a different data input to the network. However, network include loops over each sequence's elements. RNN includes the so-called LSTM layer. The Long Short-Term Memory algorithm was developed by Hochreiter and Schmidhuber in 1997, and the purpose of creation was to solve the "vanishing-gradient problem" of SimpleRNN algorithm. LSTM is basically allowing previous information to be re-injected across different timesteps. (\cite{Chollet2017})
+
+By using the tensorFlow keras API, an LSTM algorithm was conducted and implemented (Appendix \ref{Appendix10}). First of all, the corpora created in Chapter \ref{Appendix4} is loaded, and data applied to one list of sentences and one list of labels. Following, the corpora is split into a training and a testing data-set. Furthermore, the lists of trained sentences were tokenized, taking into account only the first ten-thousand most frequent words. The lists of the occurred trained sequences, which are basically lists of integers after the tokenization process, are transformed into a two-dimensions numpy array that has a shape of (number of sequences, number of timesteps). The number of timesteps is basically the length of the longest sequence. It has to be mentioned that shorter sequences are padded with values at the end, so every sequence has the same shape.
+
+As regards word embedding, Global Vectors for Word Representation (\cite{glove}) was used, which is a file containing 100-dimensional pre-computed embedding vectors for 400,000 of English words. This file helped in building an index that associates words with number vectors, and through which an embedding matrix of shape (max\_words= 10000, embedding\_dim = 100) was created and loaded in Embedding layer later on. The Embedding layer is a dictionary-like that maps integer indexes for certain words to dense vectors, and it is the first layer of our model. The second layer applies to LSTM method, while the third layer of Dense was added to end our stack of layers with an equal number of units and classes created. After constructing our model, we are freezing the Embedding layer to avoid deleting what has already been learned. 
+
+Finally, the model was trained based on the training data, which are explicitly separated into training and validation samples used for learning word embedding based on our corpora. The last step is testing the model on the test data by firstly tokenizing the sentences, and then evaluating the results occurred.

@@ -1,0 +1,278 @@
+\chapter{Data Curation}
+
+\label{Chapter4} 
+In order to successfully apply the statistical learning approach, a well-structured training data-set is needed. In this section, the process of data curation is elaborated so as both argumentative and non-argumentative sentences to be found. \par
+
+Most of the argumentative sentences included in our corpora were found on two IBM data-sets created for this purpose (Table \ref{argData}), and are about three main topics; Video Games, Democracy and Multiculturalism. It has to be mentioned that some of the data were duplicated, and thus Python code of Appendix \ref{Appendix2} was created so as to be removed. \par
+
+\begin{table}[H]
+	\centering
+	\resizebox{0.8\linewidth}{!}{%
+		\begin{tabular}{ |p{2.2cm}|p{4cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}| }
+			\hline
+					Source Data 
+							&file
+																&Total Data
+																		&Duplicated
+																				&Arguments  
+																						&Non-Arguments\\
+			\hline
+			\cite{aharoni2014benchmark} 
+							&CDEdata.xls						&1292   &967	&325	&-  \\
+			\cite{bar-haim-etal-2017-stance}	
+							&claim\_stance\_dataset\_v1			&2394  	&56		&2366	&-  \\ % ??
+			
+			\hline
+		\end{tabular}
+	}
+	\caption{Argumentative Data Used} 
+	\label{argData}
+\end{table}
+
+However, the exploitation of the existing annotated data-sets regarding argument detection has the obstacle of lacking non-argumentative instances. The previously mentioned IBM corpora contain only phrases that have been manually annotated as positive instances of arguments. This means that it is impossible to train a supervised algorithm in classifying non-arguments without any negative examples. \par
+
+So, our purpose was to gather an equal number of argumentative and non-argumentative sentences that have the same context with the curated data of IBM. Therefore, plain text referring to Video Games was found in additional IBM data-sets. These raw data files were split into sentences, and each of these sentences was labeled as argument or non-argument by authors of this research paper, and the Table \ref{argNonArgData} depicts the results. The data referred as "Not used" were blank or incomplete lines. \par
+
+The non-arguments collected were not enough, thus it was decided to scrap data from Wikipedia articles. The topics of these articles were similar to the previously gathered data, and more specifically about Video games, Democracy and Multiculturalism. The code used for the scraping process, as weel as the scraped pages, are aligned at Appendix \ref{Appendix1}. \par
+
+\begin{table}[H]
+	\centering
+	\resizebox{0.75\linewidth}{!}{%
+		\begin{tabular}{ |p{2cm}|p{4cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}| }
+			\hline
+			Source Data 
+			&file
+																&Total Data
+																		&Not Used
+																				&Arguments  
+																						&Non-Arguments\\
+		\hline
+		\cite{mirkin2017recorded}   
+			&asr/DJ\_1\_ban-video-games\_pro.wav.asr.txt		&9	 	&3		&5		&1  \\
+		\cite{mirkin2017recorded}   
+			&asr/EH\_1\_ban-video-games\_pro.wav.asr.txt		&20 	&3		&12		&5  \\ 
+		\cite{mirkin2017recorded}   
+			&asr/HE\_1\_ban-video-games\_pro.wav.asr.txt		&21 	&1		&12		&8  \\ 
+		\cite{mirkin2017recorded}   
+			&asr/SN\_1\_video-games\_pro.wav.asr.txt			&28 	&10		&15		&3  \\
+		\cite{mirkin2017recorded}   
+			&asr/TL\_1\_ban-video-games\_pro.wav.asr.txt		&19 	&6		&8		&5  \\
+		\cite{mirkin2017recorded}   
+			&asr/YB\_1\_ban-video-games\_pro.wav.asr.txt		&19 	&4		&7		&8  \\ 
+		\cite{aharoni2014benchmark} 
+			&wiki12\_articles/Gender
+			\_representation\_in\_video\_games					&39  	&4		&5		&30  \\
+																				%2755	%60
+		\hline
+	\end{tabular}}
+	\caption{Argumentative and Non-Argumentative Data Used} 
+	\label{argNonArgData}
+\end{table}
+
+Assuming that Wikipedia articles' authors are objective and do not express their point of view, most of the data scraped were included as non-arguments in the data-set. It has to be mentioned that the data collected from this procedure were previously checked from the python code-described in the Chapter \ref{Chapter3} ( Appendix \ref{Appendix6}). The sentences classified as non-arguments were added to the created data-set, while the others were considered as ambiguous (Table \ref{nonArgContrData}).\par
+
+
+\begin{table}[H]
+	\centering
+	\resizebox{0.75\linewidth}{!}{%
+		\begin{tabular}{ |p{8.7cm}||p{2.5cm}|p{2.6cm}|p{2.7cm}|p{2.8cm}|}
+			\hline
+				Topic of Wikipedia
+																	&Total Data
+																			&Not Used
+																					&Controversial sentences 
+																							&Non-Arguments\\
+		\hline
+		Early Hstory of video games									&143	&19		&59		&65		\\
+		Fourth generation of video game consoles					&65		&6		&32		&27 	\\
+		Game Boy													&84		&22		&23		&39		\\
+		Game design													&223	&32		&71		&120	\\
+		Game														&191	&28		&89		&74		\\
+		Gaming Computer	`											&129	&8		&62		&59		\\
+		Gaming disorder												&12		&6		&-		&6		\\
+		History of video games										&604	&70	    &224    &310	\\
+		Home computer												&359	&236	&54		&69		\\
+		Nintendo													&393	&70		&133	&190	\\
+		PC game														&248	&60	    &87	    &101	\\
+		Video game													&434	&82		&154	&198	\\
+		Video game addiction in China								&58		&4		&9		&45		\\
+		Video game addiction										&257	&138	&70		&49		\\
+		Video game console											&337	&261	&41		&35		\\
+		Video game culture											&292	&74		&104	&114 	\\
+		Video game development										&446	&229	&102	&115 	\\
+		Video game industry											&275	&49		&91		&135	\\
+		Video game music											&460	&176	&146	&138	\\
+		Video game programmer										&164	&19		&72		&82		\\
+		Video game-related health problems 							&52		&7		&22		&23		\\
+		Video gaming in Japan										&300	&102	&82		&116	\\
+		Video gaming in the United States							&119	&31		&27		&61		\\
+		The Game Awards												&36		&2		&18		&16		\\
+		Multicultural transruption					 				&45		&3		&20		&22		\\
+		Multicultural and diversity management 						&41		&7		&17		&17		\\
+		Multicultural education										&248	&28		&104	&116	\\
+		Multiculturalism in Australia								&156	&37		&55		&54		\\
+		Criticism of multiculturalis								&237	&56		&96		&85		\\
+		Cultural pluralism											&28		&7		&12		&9		\\
+		Multiculturalism in Canada									&205	&28		&84		&93		\\
+		Multiculturalism											&449	&62		&160	&227	\\
+		Democracy Index												&59		&18		&17		&24		\\
+		Direct democracy											&162	&22		&59		&81		\\
+		Types of democracy											&25		&7		&9		&9		\\
+		Representative democracy									&56		&7		&26		&23		\\
+		Criticism of democracy										&191	&102	&55		&34		\\
+		Athenian democracy											&335	&41		&147	&147	\\
+		History of democracy										&394	&81		&126	&187	\\
+		Democracy													&452	&71		&193	&188	\\
+																					%2952	%3503
+	    \hline
+	\end{tabular}}
+	\caption{Non-Argumentative Data Used \& Controversial Sentences} 
+	\label{nonArgContrData}
+\end{table}
+
+The previously described data were concatenated (Appendix \ref{Appendix3}), so as to be used in the statistical approach algorithms. The corpora is composed by both arguments and non-arguments (Table \ref{nonArgContrData}). \par 
+
+\begin{table}[H]
+	\centering
+	\resizebox{0.75\linewidth}{!}{%
+		\begin{tabular}{ |p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2.8cm}| }
+			\hline
+			\multicolumn{5}{|c|}{Argumentative and No-Argumentative Data Used} \\
+			\hline
+			File				&Total Data		&Arguments  &Non-Arguments &False-Positive Arguments\\
+			\hline
+			
+			dataset.csv			&6318			&2755		&3563		   &-	\\
+			found\_fp.csv		&2952			&-			&-			   &2952 \\
+	    \hline
+	\end{tabular}}
+	\caption{Data included in our corpora} 
+	\label{argNonArgDataUsed}
+\end{table}
+
+As regards the ambiguous sentences of Wikipedia articles that was mentioned before, they were all saved in a file named \texttt{found\_ambiguous.csv} (Appendix \ref{Appendix4}). This file indicates all the keywords responsible for these controversial results. The indicators- described in the previous Chapter and found in Wikipedia articles- were counted using code of Appendix \ref{Appendix5}, and the following table was the outcome of that enumeration. \par
+	
+\begin{table}[H]
+	\centering
+	\resizebox{.55\linewidth}{!}{%
+		\begin{tabular}{ |p{4cm}|p{1cm}|p{5cm}|p{1cm}| }
+			\hline
+				Indicator Found
+									&Number of Sentences
+													&Indicator Found
+																				&Number of Sentences \\
+				\hline
+				\textbf{as}			&\textbf{968}	&\textbf{that}				&\textbf{542}	\\
+				\textbf{also}		&\textbf{440}	&\textbf{because}			&\textbf{121}	\\
+				\textbf{as well}	&\textbf{101}	&\textbf{for example}		&\textbf{92}	\\
+				(E|e)(ither).+?(or)	&44	 			&as a result				&23 			\\
+				\textbf{because}	&\textbf{121}	&notably					&13				\\
+				for instance		&17				&\textbf{but}				&\textbf{326}	\\
+				that is				&40				&\textbf{while}				&\textbf{197}	\\
+				actually			&26				&against					&3				\\
+				still				&85				&so that					&12				\\
+				though				&87				&besides					&4				\\
+				furthermore			&13				&eventually					&41				\\
+				\textbf{more +}		&\textbf{40}	&either						&53				\\
+				clearly				&5				&\textbf{if}				&\textbf{107}	\\
+				since				&34				&on the grounds that		&3				\\
+				although			&85				&third						&6 				\\
+				consequently		&4				&as a consequence			&2				\\
+				rather than			&66				&instead					&42				\\
+				nevertheless		&9 				&except						&5				\\
+				otherwise			&12				&in fact					&10				\\
+				too					&3				&not only					&22				\\
+				on one side			&1				&simply						&26 			\\
+				moreover			&9				&hence						&4				\\
+				therefore			&25				&every time					&1				\\
+				in other words		&4				&despite the fact that		&2				\\
+				in order to			&43				&as							&9				\\
+				at the same time	&7				&of course					&2				\\
+				finally				&13				&as an example				&2				\\
+				first				&29				&even though				&14				\\
+				lastly				&3				&equally					&7				\\
+				whereas				&13				&(T|t)(he more).+?(the more)&2				\\
+				regardless			&7				&for this reason			&2				\\
+				simply because		&1				&by contrast				&3				\\
+				naturally			&4				&at any rate				&1				\\
+				in short			&2				&in this case				&3				\\
+				such that			&5				&essentially				&5				\\
+				(N|n)(either).+?(nor)&4				&whenever					&4				\\
+				second				&5				&as long as					&2				\\
+				even then			&3				&as a matter of fact		&1				\\
+				accordingly			&3				&provided that				&1				\\
+				conversely			&3				&alternatively				&3				\\
+				afterwards			&6				&thereafter					&1				\\
+				meanwhile			&10				&once again					&3				\\
+				once more			&1				&above all					&1				\\
+				by comparison		&1				&surely						&2 				\\
+				undoubtedly			&2				&on the one side			&1				\\
+				at first			&1				&presumably					&2				\\
+				after all			&1				&what is more				&1				\\
+				certainly			&1				&anyway						&1				\\
+				so					&16				&most						&22				\\
+				\textbf{further}	&\textbf{53}	&							&				\\
+	   		\hline
+			\end{tabular}}
+	\caption{Indicators found in Wikipedia articles} 
+	\label{indicators}
+\end{table}
+
+The goal of this process was to test in Wikipedia articles the argumentative indicators included in the Chapter \ref{Chapter3}'s dictionary, and upon cross-examination to remove indicators that do not usually reveal argumentative sentences. Based on the Table \ref{indicators}, the indicators marked as bold are the ones found in the majority of Wikipedia sentences. More than 10\% of each indicator's sentences was examined by the authors of this research papers, and the keywords, that did not usually pointed out argumentative statements and removed from the dictionary, are represented in the following. The annotations are described in detail inside the file \texttt{Results/found\_ambiguous\_results\_annotated.xlsx}.
+
+\begin{table}[H]
+	\centering
+	\resizebox{.9\linewidth}{!}{%
+		\begin{tabular}{ |p{4cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}| }
+			\hline
+				Indicator
+										&Total Number of Sentences
+												&Number of Sentences Examined
+													&Arguments
+														&Non-Argument
+															&Depending on the context
+																&Removed from the dictionary\\
+			\hline
+
+				as						&968	&131&22	&98	&11	&Yes 	\\
+				that					&542	&91	&20	&54	&17	&Yes 	\\
+				also					&440	&64	&8	&46	&10	&Yes 	\\
+				but						&326	&50	&7	&36	&7	&Yes 	\\
+				while					&197	&35	&6	&24	&5	&Yes 	\\
+				because					&121	&33	&20	&10	&3	&No		\\
+				if						&107	&20	&6	&12	&2	&No		\\
+				as well					&101	&20	&5	&14	&1	&No		\\
+				for example				&92		&8	&5	&3	&0	&No		\\
+				further					&53		&20	&4	&15	&1	&Yes	\\
+				against					&51		&21	&3	&16	&2	&Yes	\\
+				more +a dverb in 'ly'	&40		&16	&4	&12	&0	&No		\\
+				
+			\hline
+		\end{tabular}}
+	\caption{Indicators found in Wikipedia articles} 
+	\label{removed_indicators}
+\end{table}
+
+It was also observed that the following indicators were used in combination with punctuation, and that's why they were modified into the formats of the table \ref{modified_indicators}.
+
+\begin{table}[H]
+	\centering
+	\resizebox{.4\linewidth}{!}{%
+		\begin{tabular}{ |p{4cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}| }
+			\hline
+			Indicator
+									&Modified to\\
+			\hline
+			
+			while					&, while 		\\
+			that is					&, that is, 	\\
+			still					&, still	 	\\
+			as a result				&as a result,	\\
+			
+			\hline
+	\end{tabular}}
+	\caption{Indicators found in Wikipedia articles} 
+	\label{modified_indicators}
+\end{table}
+
+

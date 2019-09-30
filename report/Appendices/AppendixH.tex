@@ -1,0 +1,199 @@
+% Appendix 8
+
+\chapter{Find Argumentative Sentences}
+
+\label{Appendix8}
+
+\begin{lstlisting}[language=iPython]
+import json
+import spacy
+from __future__ import division
+from configParser import choose_function, os, py23_str, re
+
+"""
+Description: by using a dictionary that includes words often used 
+in arguments, this file identifies if given sentences are 
+arguments or not. Part of speech tagging from spaCy is used 
+for this purpose as well.
+"""
+
+FILE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+tp = 0
+tn = 0
+fp = 0
+fn = 0
+
+
+def spaCy(sentence):
+	"""
+	By using spaCy, this function gets a sentence and returns every
+	word's part of speech
+	
+	:param sentence: input to be tokenized
+	:return: tokenized sentence
+	"""
+	
+	nlp = spacy.load('en')
+	doc = nlp(py23_str(sentence))
+	
+	return doc
+
+
+def pos_tagged(doc, word):
+	"""
+	This function gets a tagged sentence from spaCy and a specific 
+	word and return its part of speech and its dependency
+	
+	:param doc: pos tagged sentence from spacy function
+	:param word: a word that we are interested to learn its part of 
+		speech
+	:return: word, its part of speech(pos) and its dependence in the
+		given sentence or None
+	"""
+	
+	word = word.lower()
+	
+	for token in doc:
+		if token.text.lower() == word:
+			return [token.text, token.pos_.lower(), token.dep_.lower()]
+	
+	return 'None'
+
+
+def check_regex(doc_regex, regex):
+	"""
+	By using spaCy's function called match, this function is
+	checking if a specific regular expression is represented
+	by a given sentence
+	
+	:param doc_regex: pos tagged sentence from spacy function
+	:param regex: a regular expression
+	:return: the part of the sentence that is indicated in the given
+		regex otherwise None
+	"""
+	
+	regex = re.compile(r''+regex)
+	
+	for match in re.finditer(regex, doc_regex.text.lower()):
+		start, end = match.span()  # get matched indices
+		word_found = doc_regex.char_span(start, end)  # create Span from indices
+		
+		return word_found
+	
+	return None
+
+
+def check_dictionary(doc, dictionary):
+	"""
+	This function checks if any of the words in the sentence exists
+	 in the dictionary given. If it does, then it is checked if 
+	 this word's part of speech match with its value given in 
+	 dictionary. If they match, then the word is added in a 
+	 list named keyword_found.
+	
+	:param doc: pos tagged sentence from spacy function
+	:param dictionary: dictionary that has as keywords words 
+		and as value their part of speech
+	:return: True if the list keyword_found is not empty or False 
+			 if it is empty
+	"""
+	
+	keyword_found = []
+	
+	for key, value in dictionary.items():
+		if check_regex(doc, key) is not None:
+			if len(value) == 1:
+				for key2 in value:
+					if checz_regex(doc, key + ' ' + key2) is not None 
+					 and check_regex(doc, key2) is not None and 
+					 pos_tagged(doc, check_regex(doc, key2).text) is not 'None':
+						if value[key2] == pos_tagged(doc, check_regex(doc, key2).text)[1] or \
+						 value[key2] == pos_tagged(doc, check_regex(doc, key2).text)[2]:
+							keyword_found.append(key + " + " + key2)
+			elif value == 'none':
+				keyword_found.append(key)
+			elif len(value) != 1 and check_regex(doc, value) 
+			 is not None:
+				keyword_found.append(key)
+			elif pos_tagged(doc, key)[1] == value or \
+			 pos_tagged(doc, key)[2] == value:
+				keyword_found.append(key)
+	
+	if len(keyword_found) != 0:
+		return 'True'
+	else:
+		return 'False'
+
+
+def check_validity(real_value, given_value):
+	"""
+	This function checks if two given values match
+	
+	:param real_value:  real value is the result of check_dictionary
+		function
+	:param given_value: given value is the value given by analysts 
+		into dataset
+	:return: Correct results if they match or Wrong results if they
+		do not match
+	"""
+	global tn, tp, fn, fp
+	
+	if real_value in given_value:
+		if real_value == 'True':
+			tp = tp + 1
+		else:
+			tn = tn + 1
+		return "Correct results"
+	else:
+		if real_value == 'False':
+			fp = fp + 1
+		else:
+			fn = fn + 1
+		return "Wrong results"
+
+
+def precision():
+	if (tp + fp) != 0:
+		return tp/(tp + fp)
+	else:
+		return "Integer division by zero"
+
+
+def recall():
+	if (tp + fn) != 0:
+		return tp/(tp + fn)
+	else:
+		return "Integer division by zero"
+
+
+def f1_score(precision, recall):
+	if (precision + recall) != 0:
+		return 2 * (precision * recall) / (precision + recall)
+	else:
+		return "Integer division by zero"
+
+
+if __name__ == '__main__':
+
+	with open('../dict/dictionary.json', 'r') as dict:
+		dictionary = json.load(dict)
+	
+	sentences = choose_function("found_fp.csv")
+	labeled_data = False
+	
+	if sentences != 'No dataset found':
+        for sentence in sentences:
+
+			if len(sentence) == 2:
+				print('"' + str(sentence[0]).strip('b') + '",' + 'True') # for csv
+				# print ( str ( sentence[0] ).strip ( 'b' ) + ',' + 'True' )
+				labeled_data = True
+				
+			else:
+				print('"' + str(sentence[0]).strip('b') + '",' + 
+				 check_dictionary(spaCy(sentence[0]), dictionary)) # for csv
+	
+	else:
+		print(sentences)
+\end{lstlisting}
